@@ -6,6 +6,8 @@
 #include <vector>
 #include <initializer_list>
 
+#include <future>
+
 #include <thread>
 
 template <typename T>
@@ -46,7 +48,17 @@ public:
     }
 
     T GetSegment(const size_t& need_left_border, const size_t& need_right_border) {
-        return GetSegment(1, 0, array_size_ - 1, need_left_border, need_right_border);
+        if (need_left_border == 0 && need_right_border == array_size_ - 1) {
+            return *tree_data_;
+        }
+        size_t median_border = (array_size_ - 1) >> 1;
+        T result_for_left_subtree = 0;
+        std::thread t([&]() {
+            result_for_left_subtree = GetSegment(2, 0, median_border, need_left_border, std::min(median_border, need_right_border));
+        });
+        T result_for_right_subtree = GetSegment(3, median_border + 1, array_size_ - 1, std::max(median_border + 1, need_left_border), need_right_border);
+        t.join();
+        return result_for_left_subtree + result_for_right_subtree;
     }
 
 private:
@@ -100,23 +112,11 @@ private:
         }
         const size_t median_border = (left_border + right_border) >> 1;
 
-        if (vertex == 1) {
-            T result_for_left_subtree = 0;
-            std::thread thread_for_left_subtree([&]() {
-                result_for_left_subtree = GetSegment(vertex << 1, left_border, median_border,
-                                                     need_left_border, std::min(median_border, need_right_border));
-            });
-            T result_for_right_subtree = GetSegment(vertex << 1 | 1, median_border + 1, right_border,
-                                  std::max(median_border + 1, need_left_border), need_right_border);
-            thread_for_left_subtree.join();
-            return result_for_left_subtree + result_for_right_subtree;
-        } else {
-            return
-                GetSegment(vertex << 1, left_border, median_border,
-                           need_left_border, std::min(median_border, need_right_border)) +
-                GetSegment(vertex << 1 | 1, median_border + 1, right_border,
-                           std::max(median_border + 1, need_left_border), need_right_border);
-        }
+        return
+            GetSegment(vertex << 1, left_border, median_border,
+                       need_left_border, std::min(median_border, need_right_border)) +
+            GetSegment(vertex << 1 | 1, median_border + 1, right_border,
+                       std::max(median_border + 1, need_left_border), need_right_border);
     }
 
     size_t array_size_ = 0;

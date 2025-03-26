@@ -11,8 +11,8 @@
 template <typename T>
 class MultiflowSegmentTree {
 public:
-    MultiflowSegmentTree() {}
-    MultiflowSegmentTree(size_t array_size, T value = 0) :
+    MultiflowSegmentTree() = default;
+    explicit MultiflowSegmentTree(const size_t& array_size, const T value = 0) :
             array_size_{array_size},
             array_{new T[array_size_]},
             tree_data_{new T[array_size_ << 2]} {
@@ -20,7 +20,7 @@ public:
         std::fill(array_, std::next(array_, array_size_), value);
         build(1, 0, array_size_ - 1);
     }
-    MultiflowSegmentTree(std::vector<T> init_vector) :
+    explicit MultiflowSegmentTree(const std::vector<T>& init_vector) :
             array_size_{init_vector.size()},
             array_{new T[array_size_]},
             tree_data_{new T[array_size_ << 2]} {
@@ -30,7 +30,7 @@ public:
         }
         build(1, 0, array_size_ - 1);
     }
-    MultiflowSegmentTree(std::initializer_list<T> init_list) :
+    MultiflowSegmentTree(const std::initializer_list<T>& init_list) :
             array_size_{init_list.size()},
             array_{new T[array_size_]},
             tree_data_{new T[array_size_ << 2]} {
@@ -41,22 +41,22 @@ public:
         build(1, 0, array_size_ - 1);
     }
 
-    void Update(size_t position, size_t value) {
+    void Update(const size_t& position, const size_t& value) {
         Update(1, 0, array_size_ - 1, position, value);
     }
 
-    T GetSegment(size_t need_left_border, size_t need_right_border) {
+    T GetSegment(const size_t& need_left_border, const size_t& need_right_border) {
         return GetSegment(1, 0, array_size_ - 1, need_left_border, need_right_border);
     }
 
 private:
 
-    void build(size_t vertex, size_t left_border, size_t right_border) {
+    void build(const size_t& vertex, const size_t& left_border, const size_t& right_border) {
         if (left_border == right_border) {
             *std::next(tree_data_, vertex) = *std::next(array_, left_border);
             return;
         }
-        size_t median_border = (left_border + right_border) >> 1;
+        const size_t median_border = (left_border + right_border) >> 1;
         if (vertex == 1) {
             std::thread tread_for_left_subtree([&]() {
                 build(vertex << 1, left_border, median_border);
@@ -72,13 +72,14 @@ private:
                 *std::next(tree_data_, vertex << 1 | 1);
     }
 
-    void Update(size_t vertex, size_t left_border, size_t right_border, size_t position, size_t value) {
+    void Update(const size_t& vertex, const size_t& left_border, const size_t& right_border,
+                const size_t& position, const size_t& value) {
         if (left_border == right_border) {
             *std::next(array_, left_border) = value;
             *std::next(tree_data_, vertex) = value;
             return;
         }
-        size_t median_border = (left_border + right_border) >> 1;
+        const size_t median_border = (left_border + right_border) >> 1;
         if (position <= median_border) {
             Update(vertex << 1, left_border, median_border, position, value);
         } else {
@@ -89,15 +90,15 @@ private:
                 *std::next(tree_data_, vertex << 1 | 1);
     }
 
-    T GetSegment(size_t vertex, size_t left_border, size_t right_border,
-                 size_t need_left_border, size_t need_right_border) {
+    T GetSegment(const size_t& vertex, const size_t& left_border, const size_t& right_border,
+                 const size_t& need_left_border, const size_t& need_right_border) {
         if (need_left_border > need_right_border) {
             return 0;
         }
         if (need_left_border == left_border && need_right_border == right_border) {
             return *std::next(tree_data_, vertex);
         }
-        size_t median_border = (left_border + right_border) >> 1;
+        const size_t median_border = (left_border + right_border) >> 1;
 
         if (vertex == 1) {
             T result_for_left_subtree = 0;
@@ -118,7 +119,7 @@ private:
         }
     }
 
-    size_t array_size_;
-    T* array_;
-    T* tree_data_;
+    size_t array_size_ = 0;
+    T* array_ = nullptr;
+    T* tree_data_ = nullptr;
 };

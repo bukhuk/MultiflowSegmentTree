@@ -11,7 +11,7 @@ struct Test {
 
     Test() = default;
 
-    Test(const size_t& array_size, const size_t& number_of_query, const std::vector<T>& array, const std::vector<T>& query) :
+    Test(const size_t& array_size, const size_t& number_of_query, const std::vector<T>& array, const std::vector<Query<T>>& query) :
         array_size_{array_size},
         number_of_query_{number_of_query},
         array_{array},
@@ -24,6 +24,14 @@ struct Test {
 
     size_t NumberOfQuery() {
         return number_of_query_;
+    }
+
+    std::vector<T> GetArray() const {
+        return array_;
+    }
+
+    std::vector<Query<T>> GetQuery() const {
+        return query_;
     }
 
    private:

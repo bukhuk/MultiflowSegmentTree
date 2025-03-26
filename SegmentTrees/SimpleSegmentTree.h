@@ -36,11 +36,10 @@ class SegmentTree {
         for (size_t i = 0; i < array_size_; i++) {
             *std::next(array_, i) = init_list[i];
         }
-        std::cout << std::endl;
         build(1, 0, array_size_ - 1);
     }
 
-    void Update(const size_t& position, const size_t& value) {
+    void Update(const size_t& position, const T& value) {
         Update(1, 0, array_size_ - 1, position, value);
     }
 

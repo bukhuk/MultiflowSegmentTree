@@ -1,14 +1,10 @@
 #include <iostream>
 
-#include "SegmentTrees/SimpleSegmentTree.h"
-#include "SegmentTrees/MultiflowSegmentTree.h"
-#include "Timer.h"
-
-#include <chrono>
+#include "Testing/CorrectAnswerTesting.h"
 
 int main() {
 
-    
+    CorrectAnswerTesting();
 
     return 0;
 }

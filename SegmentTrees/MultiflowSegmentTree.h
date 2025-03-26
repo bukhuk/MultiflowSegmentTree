@@ -43,7 +43,7 @@ public:
         build(1, 0, array_size_ - 1);
     }
 
-    void Update(const size_t& position, const size_t& value) {
+    void Update(const size_t& position, const T& value) {
         Update(1, 0, array_size_ - 1, position, value);
     }
 
@@ -85,7 +85,7 @@ private:
     }
 
     void Update(const size_t& vertex, const size_t& left_border, const size_t& right_border,
-                const size_t& position, const size_t& value) {
+                const size_t& position, const T& value) {
         if (left_border == right_border) {
             *std::next(array_, left_border) = value;
             *std::next(tree_data_, vertex) = value;
